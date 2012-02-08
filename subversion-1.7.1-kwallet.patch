@@ -1,0 +1,26 @@
+Recent RHEL and Fedora releases install kde3 and kde4 in paralleel. This
+teaches kwallet.m4 to use more derived values, especially the "kde4/devel"
+for the libraries.
+
+--- subversion-1.7.1/build/ac-macros/kwallet.m4.kde4	2011-10-29 15:10:15.376473938 -0400
++++ subversion-1.7.1/build/ac-macros/kwallet.m4	2011-10-29 15:54:42.012444385 -0400
+@@ -64,15 +64,15 @@
+                     fi
+                   done
+                   qt_include_dirs="`$PKG_CONFIG --cflags-only-I QtCore QtDBus QtGui`"
+-                  kde_dir="`$KDE4_CONFIG --prefix`"
+-                  SVN_KWALLET_INCLUDES="$DBUS_CPPFLAGS $qt_include_dirs -I$kde_dir/include"
++                  kde_inc_dir="`$KDE4_CONFIG --path include`"
++                  SVN_KWALLET_INCLUDES="$DBUS_CPPFLAGS $qt_include_dirs -I$kde_inc_dir"
+                   qt_libs_other_options="`$PKG_CONFIG --libs-only-other QtCore QtDBus QtGui`"
+                   SVN_KWALLET_LIBS="$DBUS_LIBS -lQtCore -lQtDBus -lQtGui -lkdecore -lkdeui $qt_libs_other_options"
+                   CXXFLAGS="$CXXFLAGS $SVN_KWALLET_INCLUDES"
+                   LIBS="$LIBS $SVN_KWALLET_LIBS"
+                   qt_lib_dirs="`$PKG_CONFIG --libs-only-L QtCore QtDBus QtGui`"
+-                  kde_lib_suffix="`$KDE4_CONFIG --libsuffix`"
+-                  LDFLAGS="$old_LDFLAGS `SVN_REMOVE_STANDARD_LIB_DIRS($qt_lib_dirs -L$kde_dir/lib$kde_lib_suffix)`"
++                  kde_lib_dir="`$KDE4_CONFIG --path lib | awk -F: '{print $(NF)}'`/kde4/devel"
++                  LDFLAGS="$old_LDFLAGS `SVN_REMOVE_STANDARD_LIB_DIRS($qt_lib_dirs -L$kde_lib_dir)`"
+                   AC_LANG(C++)
+                   AC_LINK_IFELSE([AC_LANG_SOURCE([[
+ #include <kwallet.h>
