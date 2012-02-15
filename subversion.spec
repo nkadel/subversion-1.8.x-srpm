@@ -1,4 +1,4 @@
-# $Id: subversion-1.7.1-fcbased.spec,v 1.2 2011/10/28 11:47:25 nkadel Exp nkadel $
+# $Id: subversion.spec,v 1.2 2012/02/14 19:16:14 nkadel Exp nkadel $
 # Authority: dag
 # Upstream: Collabnet <dev$subversion,apache,org>
 
@@ -9,29 +9,24 @@
 %{?el5: %define _without_kwallet 1}
 %{?el5: %define _without_psvn 1}
 %{?el5: %define _without_sqlite 1}
-%{?el5: %define _without_noarch 1}
 ### EL4 ships with subversion-1.1.4
 %{?el4:# Tag: rfx}
 %{?el4: %define _without_kwallet 1}
 %{?el4: %define _without_psvn 1}
 %{?el4: %define _without_sqlite 1}
-%{?el4: %define _without_noarch 1}
 
 # Verify logic, turn into _with_ variaable for legibility, set default
 %{?!_with_kwallet: %{!?_without_kwallet: %define _with_kwallet 1}}
 %{?!_with_psvn: %{!?_without_psvn: %define _with_psvn 1}}
 %{?!_with_sqlite: %{!?_without_sqlite: %define _with_sqlite 1}}
-%{?!_with_noarch: %{!?_without_noarch: %define _with_noarch 1}}
 
 %{?_with_kwallet: %{?_without_kwallet: %{error: both _with_kwallet and _without_kwallet exist}}}
 %{?_with_psvn: %{?_without_psvn: %{error: both _with_psvn and _without_psvn exist}}}
 %{?_with_sqlite: %{?_without_sqlite: %{error: both _with_sqlite and _without_sqlite exist}}}
-%{?_with_noarch: %{?_without_noarch: %{error: both _with_noarch and _without_noarch exist}}}
 
 %{!?_with_kwallet: %{!?_without_kwallet: %{error: neither _with_kwallet nor _without_kwallet exist}}}
 %{!?_with_psvn: %{!?_without_psvn: %{error: neither _with_psvn nor _without_psvn exist}}}
 %{!?_with_sqlite: %{!?_without_sqlite: %{error: neither _with_sqlite nor _without_sqlite exist}}}
-%{!?_with_noarch: %{!?_without_noarch: %{error: neither _with_noarch nor _without_noarch exist}}}
 
 # set to zero to avoid running test suite
 # Set to 0 on older systems
@@ -53,8 +48,8 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.7.2
-Release: 0.1%{?dist}
+Version: 1.7.3
+Release: 0.2%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -65,8 +60,10 @@ Source3: filter-requires.sh
 Source4: http://www.xsteve.at/prg/emacs/psvn.el
 Source5: psvn-init.el
 Source6: svnserve.init
-# http://bugs.debian.org/546990
-Patch8: subversion-1.7.1-kwallet.patch
+Patch1: subversion-1.7.0-rpath.patch
+Patch2: subversion-1.7.0-pie.patch
+Patch3: subversion-1.7.0-kwallet.patch
+Patch4: subversion-1.7.2-ruby19.patch
 BuildRequires: apr-devel >= 1.2.7
 BuildRequires: apr-util-devel >= 1.2.7
 BuildRequires: autoconf
@@ -74,11 +71,14 @@ BuildRequires: cyrus-sasl-devel
 BuildRequires: db4-devel >= 4.1.25
 BuildRequires: dbus-devel
 BuildRequires: gettext
+# Renamed to libgnome-keyring-devel in FC 17
 BuildRequires: gnome-keyring-devel
 BuildRequires: libtool
 BuildRequires: neon-devel >= 0:0.24.7-1
 BuildRequires: python
 BuildRequires: python-devel
+BuildRequires: ruby
+BuildRequires: ruby-devel
 %if %{?_with_sqlite:1}%{!?_with_sqlite:0}
 BuildRequires: sqlite-devel >= 3.4.0
 %endif
@@ -113,7 +113,7 @@ compelling replacement for CVS.
 Group: Development/Tools
 Summary: Libraries for Subversion Version Control system
 # APR 1.3.x interfaces are required
-Conflicts: apr%{?_isa}< 1.3.0
+Conflicts: apr%{?_isa} < 1.3.0
 
 %description libs
 The subversion-libs package includes the essential shared libraries
@@ -154,6 +154,11 @@ Requires: subversion%{?_isa} = %{version}-%{release}
 %description kde
 The subversion-kde package adds support for storing Subversion
 passwords in the KDE Wallet.
+
+%if %{?_with_kwallet:0}%{!?_with_kwallet:1}
+Kwallet for %{name} is not currently supported on this operating system
+This package is a placeholder until KDE4 is available.
+%endif
 
 %package -n mod_dav_svn
 Group: System Environment/Daemons
@@ -215,9 +220,10 @@ echo "Enabling sqlite-amalgamation instead of system sqlite"
 %{__ln_s} sqlite-%{sqlite_amalgamation_version} sqlite-amalgamation
 %endif
 
-%patch8 -p1 -b .kwallet
-
-mv tools/client-side/bash_completion .
+%patch1 -p1 -b .rpath
+%patch2 -p1 -b .pie
+%patch3 -p1 -b .kwallet
+%patch4 -p1 -b .ruby
 
 %build
 # Regenerate the buildsystem, so that:
@@ -342,7 +348,7 @@ sed -i "/^dependency_libs/{
      }"  $RPM_BUILD_ROOT%{_libdir}/*.la
 
 # Install bash completion
-install -Dpm 644 bash_completion \
+install -Dpm 644 tools/client-side/bash_completion \
         $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/%{name}
 
 %find_lang %{name}
@@ -447,6 +453,8 @@ fi
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/subversion.conf
 %{_libdir}/httpd/modules/mod_dav_svn.so
 %{_libdir}/httpd/modules/mod_authz_svn.so
+%{_libdir}/httpd/modules/mod_dontdothat.so
+%doc tools/server-side/mod_dontdothat/README
 
 %files perl
 %defattr(-,root,root,-)
@@ -468,15 +476,44 @@ fi
 %endif
 
 %changelog
-* Thu Oct 27 2011 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.0.1-fc
-- Update to 1.7.1
-- "contrib" is no longer included, remove svn2cl package, delete patches
-- Changled installation of psvn to use __install.
+* Mon Feb 13 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.3-0.2
+- Update to 1.7.3 from Fedora 1.7.2 package
+- Integrate Repoforge hooks to compile for RHEL 5 and RHEL 6,
+  especially kwallet module and sqlite-amalgamation for RHEL 5.
+- Simplify bash_completion installation (avoid re-arranging source directory).
+- Add mod_dontdothat to mod_dav_svn package.
+- Add tools/server-side/mod_dontdothat/README to mod_dav_svn docs.
+- Add BuildRequires for ruby and ruby-devel to handle ruby_sitearch
+  in .spec file.
+- Eliminate noarch build processing, documentation is now built as
+  subversion-api-docs package.
+- Update subversion.conf to point to safer and more consistent /var/www/svn
 
-* Wed Oct 26 2011 Nico Kadel-Garcia <nkadel@gmail.com> - 1.6.17-0.5
-- Provide kwallet exclusions and BuildRequires changes for RHEL 5
-- Disable "noarch" for documents for RHEL 5
-- Disable psvn.el for RHEL 5, incompatible emacs requirements.
+* Thu Feb  9 2012 Joe Orton <jorton@redhat.com> - 1.7.2-1
+- update to 1.7.2
+- add Vincent Batts' Ruby 1.9 fixes from dev@
+
+* Sun Feb  5 2012 Peter Robinson <pbrobinson@fedoraproject.org> - 1.7.1-3
+- fix gnome-keyring build deps 
+
+* Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
+* Mon Nov 28 2011 Joe Orton <jorton@redhat.com> - 1.7.1-1
+- update to 1.7.1
+- (temporarily) disable failing kwallet support
+
+* Sun Nov 27 2011 Ville Skyttä <ville.skytta@iki.fi> - 1.7.0-3
+- Build with libmagic support.
+
+* Sat Oct 15 2011 Ville Skyttä <ville.skytta@iki.fi> - 1.7.0-2
+- Fix apr Conflicts syntax in -libs.
+- Fix obsolete chown syntax in subversion.conf.
+- Fix use of spaces vs tabs in specfile.
+
+* Wed Oct 12 2011 Joe Orton <jorton@redhat.com> - 1.7.0-1
+- update to 1.7.0
+- drop svn2cl (no longer shipped in upstream tarball)
 
 * Thu Jul 21 2011 Petr Sabata <contyk@redhat.com> - 1.6.17-5
 - Perl mass rebuild
