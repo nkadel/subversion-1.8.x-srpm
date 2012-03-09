@@ -1,0 +1,30 @@
+This github repo includes tools for building subversion-1.7.3
+RPM's. It is based on the Fedora 17 subversion-1.7.2 package, and
+includes tweaks merged from Repoforge's older subversion-1.6.x
+packages for compilation on multiple versions of RHEL or Fedora.
+
+There is a new component, mod_downtwrite that. This is packaged with
+mod_dav_svn, and provides limitations on server-burdensome operations
+such as checking out entire repository trees.
+
+The following components are not compatible with older RHEL releases,
+such as RHEL 5.
+
+        psvn - No longer compatible with older Emacs or Xemacs.
+		Not included in subversion package for old OS.
+	subversion-kde - requires KDE4 Required rewrite of
+		dependencies for RPM building. subversion-kde is still
+		built, but as placeholder.
+	SQLite - Modern SQLite or "sqlite-amalgamation" required.  Use
+		sqlite-amalgamation tarball as needed.
+	perl-devel - Spurious dependency for compilation, does not
+		exist on RHEL 5.
+
+The API documentation used to be built as part of subversion-devel.
+Fedora separated this out into subversion-api-docs, for good reasons,
+so that needs to be built separately.
+
+The bash-completion utility was installed rather oddly: that has been
+cleaned up.
+
+
