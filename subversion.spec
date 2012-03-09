@@ -48,12 +48,12 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.7.3
-Release: 0.2%{?dist}
+Version: 1.7.4
+Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
-Source0: http://subversion.tigris.org/downloads/subversion-%{version}.tar.bz2
+Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
 Source1: subversion.conf
 Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
 Source3: filter-requires.sh
@@ -476,6 +476,9 @@ fi
 %endif
 
 %changelog
+* Thu Mar 08 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.4-0.1
+- Update to 1.7.4 from Repoforge package.
+
 * Mon Feb 13 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.3-0.2
 - Update to 1.7.3 from Fedora 1.7.2 package
 - Integrate Repoforge hooks to compile for RHEL 5 and RHEL 6,
