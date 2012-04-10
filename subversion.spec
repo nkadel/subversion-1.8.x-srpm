@@ -49,7 +49,7 @@
 Summary: A Modern Concurrent Version Control System
 Name: subversion
 Version: 1.7.4
-Release: 0.1%{?dist}
+Release: 0.2%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -476,6 +476,9 @@ fi
 %endif
 
 %changelog
+* Mon Apr 09 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.4-0.2
+- Synchronize filter-requires.sh with 1.6.17 SRPM.
+
 * Thu Mar 08 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.4-0.1
 - Update to 1.7.4 from Repoforge package.
 
