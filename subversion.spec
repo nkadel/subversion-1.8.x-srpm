@@ -6,19 +6,19 @@
 %{?el6:# Tag: rfx}
 ### EL5 ships with subversion-1.6.11
 %{?el5:# Tag: rfx}
-%{?el5: %define _without_kwallet 1}
-%{?el5: %define _without_psvn 1}
-%{?el5: %define _without_sqlite 1}
+%{?el5: %global _without_kwallet 1}
+%{?el5: %global _without_psvn 1}
+%{?el5: %global _without_sqlite 1}
 ### EL4 ships with subversion-1.1.4
 %{?el4:# Tag: rfx}
-%{?el4: %define _without_kwallet 1}
-%{?el4: %define _without_psvn 1}
-%{?el4: %define _without_sqlite 1}
+%{?el4: %global _without_kwallet 1}
+%{?el4: %global _without_psvn 1}
+%{?el4: %global _without_sqlite 1}
 
 # Verify logic, turn into _with_ variaable for legibility, set default
-%{?!_with_kwallet: %{!?_without_kwallet: %define _with_kwallet 1}}
-%{?!_with_psvn: %{!?_without_psvn: %define _with_psvn 1}}
-%{?!_with_sqlite: %{!?_without_sqlite: %define _with_sqlite 1}}
+%{?!_with_kwallet: %{!?_without_kwallet: %global _with_kwallet 1}}
+%{?!_with_psvn: %{!?_without_psvn: %global _with_psvn 1}}
+%{?!_with_sqlite: %{!?_without_sqlite: %global _with_sqlite 1}}
 
 %{?_with_kwallet: %{?_without_kwallet: %{error: both _with_kwallet and _without_kwallet exist}}}
 %{?_with_psvn: %{?_without_psvn: %{error: both _with_psvn and _without_psvn exist}}}
@@ -30,26 +30,26 @@
 
 # set to zero to avoid running test suite
 # Set to 0 on older systems
-%define make_check 0
+%global make_check 0
 
-%define with_java 1
+%global with_java 1
 
 # Used only when sqlite is too old
-%define sqlite_amalgamation_version 3.6.22
+%global sqlite_amalgamation_version 3.6.22
 
 # set JDK path to build javahl; default for JPackage
-%define jdk_path /usr/lib/jvm/java
+%global jdk_path /usr/lib/jvm/java
 
-%define perl_vendorarch %(eval "`%{__perl} -V:installvendorarch`"; echo $installvendorarch)
+%global perl_vendorarch %(eval "`%{__perl} -V:installvendorarch`"; echo $installvendorarch)
 
-%{!?ruby_sitearch: %define ruby_sitearch %(ruby -rrbconfig -e 'puts Config::CONFIG["sitearchdir"]')}
+%{!?ruby_sitearch: %global ruby_sitearch %(ruby -rrbconfig -e 'puts Config::CONFIG["sitearchdir"]')}
 
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
 Version: 1.7.4
-Release: 0.2%{?dist}
+Release: 0.3%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -96,10 +96,10 @@ Requires: subversion-libs%{?_isa} = %{version}-%{release}
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig, /sbin/service
 
-%define __perl_requires %{SOURCE3}
+%global __perl_requires %{SOURCE3}
 
 # Put Python bindings in site-packages
-%define swigdirs swig_pydir=%{python_sitearch}/libsvn swig_pydir_extra=%{python_sitearch}/svn
+%global swigdirs swig_pydir=%{python_sitearch}/libsvn swig_pydir_extra=%{python_sitearch}/svn
 
 %description
 Subversion is a concurrent version control system which enables one
@@ -163,7 +163,6 @@ This package is a placeholder until KDE4 is available.
 %package -n mod_dav_svn
 Group: System Environment/Daemons
 Summary: Apache httpd module for Subversion server
-Requires: httpd-mmn = %(cat %{_includedir}/httpd/.mmn || echo missing)
 Requires: subversion-libs%{?_isa} = %{version}-%{release}
 BuildRequires: httpd-devel >= 2.0.45
 
