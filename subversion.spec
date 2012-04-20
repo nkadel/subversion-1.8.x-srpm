@@ -2,26 +2,55 @@
 # Authority: dag
 # Upstream: Collabnet <dev$subversion,apache,org>
 
+%{?dtag: %{expand: %%global %dtag 1}}
+
+%global _default_patch_fuzz 2
+
+# Default included settings
+#    Requires bash 4.x
+%global with_bash_completeion 1
+#    Requires gnome and recent dbus
+%global with_gnome_keyring 1
+#    Requires contemporary java
+%global with_java 1
+#    Requires KDE 4
+%global with_kwallet 1
+#    Requires emacs-21.3 or later
+%global with_psvn 1
+#    Requires ruby 3.8.2 or later
+%global with_ruby 1
+
+# Use system versions where feasible, included tarballs when not
+%global with_system_neon 1
+%global with_system_python 1
+%global with_system_sqlite 1
+
+# Define as 1 to run test suite,
+# fails on older OS's, takes an hour to run
+%global make_check 0
+
 ### EL6 ships with subversion-1.6.11
 %{?el6:# Tag: rfx}
 ### EL5 ships with subversion-1.6.11
 %{?el5:# Tag: rfx}
+%{?el5: %global with_bash_completeion 0}
 %{?el5: %global with_kwallet 0}
 %{?el5: %global with_psvn 0}
-%{?el5: %global with_sqlite 0}
+
+%{?el5: %global with_system_sqlite 0}
 ### EL4 ships with subversion-1.1.4
 %{?el4:# Tag: rfx}
+%{?el4: %global make_check 0}
 %{?el4: %global with_kwallet 0}
 %{?el4: %global with_psvn 0}
-%{?el4: %global with_sqlite 0}
 
-# set to zero to avoid running test suite
-# Set to 0 on older systems
-%global make_check 0
+%{?el4: %global with_system_neon 0}
+%{?el4: %global with_system_python 0}
+%{?el4: %global with_system_sqlite 0}
 
-%global with_java 1
-
-# Used only when sqlite is too old
+# Local tarballs used only when system components are too old
+%global neon_version 0.28.4
+%global python_version 2.4.6
 %global sqlite_amalgamation_version 3.6.22
 
 # set JDK path to build javahl; default for JPackage
@@ -66,7 +95,7 @@ BuildRequires: python
 BuildRequires: python-devel
 BuildRequires: ruby
 BuildRequires: ruby-devel
-%if %{with_sqlite}
+%if %{with_system_sqlite}
 BuildRequires: sqlite-devel >= 3.4.0
 %endif
 BuildRequires: swig >= 1.3.24
@@ -199,12 +228,26 @@ Requires: ruby(abi) = 1.8
 This package includes the Ruby bindings to the Subversion libraries.
 
 %prep
-%if %{with_sqlite}
 %setup -q
-%else
-%setup -q -a 2
-echo "Enabling sqlite-amalgamation instead of system sqlite"
-%{__ln_s} sqlite-%{sqlite_amalgamation_version} sqlite-amalgamation
+
+%if !%{with_system_sqlite}
+echo "Setting up included %{SOURCE2}"
+%setup -q -T -D -a 2
+%{__mv} sqlite-%{sqlite_amalgamation_version} sqlite-amalgamation
+%endif
+
+%if !%{with_system_python}
+echo "Setting up included %{SOURCE10}"
+%setup -q -T -D -a 10
+%endif
+
+# Old Subversion releases had traces of these
+%{__rm} -rf neon apr apr-util
+
+%if !%{with_system_neon}
+echo "Setting up included %{SOURCE11}"
+%setup -q -T -D -a 11
+%{__mv} neon-%{neon_version} neon
 %endif
 
 %patch1 -p1 -b .rpath
