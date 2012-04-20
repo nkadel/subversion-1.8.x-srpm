@@ -21,5 +21,5 @@
 #
 
 /usr/lib/rpm/perl.req $* | \
-    sed -e '/perl(Config::IniFiles)/d'
+    sed -e '/perl(Config::IniFiles)/d' \
     -e 's/perl(File::Path) >= 1.0404/perl(File::Path) >= 1.04/'
