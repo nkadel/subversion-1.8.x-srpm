@@ -6,27 +6,14 @@
 %{?el6:# Tag: rfx}
 ### EL5 ships with subversion-1.6.11
 %{?el5:# Tag: rfx}
-%{?el5: %global _without_kwallet 1}
-%{?el5: %global _without_psvn 1}
-%{?el5: %global _without_sqlite 1}
+%{?el5: %global with_kwallet 0}
+%{?el5: %global with_psvn 0}
+%{?el5: %global with_sqlite 0}
 ### EL4 ships with subversion-1.1.4
 %{?el4:# Tag: rfx}
-%{?el4: %global _without_kwallet 1}
-%{?el4: %global _without_psvn 1}
-%{?el4: %global _without_sqlite 1}
-
-# Verify logic, turn into _with_ variaable for legibility, set default
-%{?!_with_kwallet: %{!?_without_kwallet: %global _with_kwallet 1}}
-%{?!_with_psvn: %{!?_without_psvn: %global _with_psvn 1}}
-%{?!_with_sqlite: %{!?_without_sqlite: %global _with_sqlite 1}}
-
-%{?_with_kwallet: %{?_without_kwallet: %{error: both _with_kwallet and _without_kwallet exist}}}
-%{?_with_psvn: %{?_without_psvn: %{error: both _with_psvn and _without_psvn exist}}}
-%{?_with_sqlite: %{?_without_sqlite: %{error: both _with_sqlite and _without_sqlite exist}}}
-
-%{!?_with_kwallet: %{!?_without_kwallet: %{error: neither _with_kwallet nor _without_kwallet exist}}}
-%{!?_with_psvn: %{!?_without_psvn: %{error: neither _with_psvn nor _without_psvn exist}}}
-%{!?_with_sqlite: %{!?_without_sqlite: %{error: neither _with_sqlite nor _without_sqlite exist}}}
+%{?el4: %global with_kwallet 0}
+%{?el4: %global with_psvn 0}
+%{?el4: %global with_sqlite 0}
 
 # set to zero to avoid running test suite
 # Set to 0 on older systems
@@ -79,14 +66,14 @@ BuildRequires: python
 BuildRequires: python-devel
 BuildRequires: ruby
 BuildRequires: ruby-devel
-%if %{?_with_sqlite:1}%{!?_with_sqlite:0}
+%if %{with_sqlite}
 BuildRequires: sqlite-devel >= 3.4.0
 %endif
 BuildRequires: swig >= 1.3.24
 BuildRequires: texinfo
 BuildRequires: which
 # kde4-config forces correct kde4 packages for RHEL 6
-%if %{?_with_kwallet:1}%{!?_with_kwallet:0}
+%if %{with_kwallet}
 BuildRequires: /usr/bin/kde4-config
 BuildRequires: kdelibs-devel >= 4.0.0
 %endif
@@ -155,7 +142,7 @@ Requires: subversion%{?_isa} = %{version}-%{release}
 The subversion-kde package adds support for storing Subversion
 passwords in the KDE Wallet.
 
-%if %{?_with_kwallet:0}%{!?_with_kwallet:1}
+%if %{with_kwallet}
 Kwallet for %{name} is not currently supported on this operating system
 This package is a placeholder until KDE4 is available.
 %endif
@@ -202,7 +189,8 @@ This package includes the JNI bindings to the Subversion libraries.
 %package ruby
 Group: Development/Libraries
 Summary: Ruby bindings to the Subversion libraries
-BuildRequires: ruby-devel >= 1.8.2, ruby >= 1.8.2
+BuildRequires: ruby-devel >= 1.8.2
+BuildRequires: ruby >= 1.8.2
 Requires: subversion%{?_isa} = %{version}-%{release}
 Conflicts: ruby-libs%{?_isa} < 1.8.2
 Requires: ruby(abi) = 1.8
@@ -211,7 +199,7 @@ Requires: ruby(abi) = 1.8
 This package includes the Ruby bindings to the Subversion libraries.
 
 %prep
-%if %{?_with_sqlite:1}%{!?_with_sqlite:0}
+%if %{with_sqlite}
 %setup -q
 %else
 %setup -q -a 2
@@ -260,7 +248,7 @@ export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 	--enable-javahl \
 	--with-junit=%{_prefix}/share/java/junit.jar \
 %endif
-%if %{?_with_kwallet:1}%{!?_with_kwallet:0}
+%if %{with_kwallet}
 	--with-kwallet \
 %else
 	--without-kwallet \
@@ -330,7 +318,7 @@ rm -f ${RPM_BUILD_ROOT}%{ruby_sitearch}/svn/ext/*.*a
 # Trim what goes in docdir
 rm -rf tools/*/*.in tools/test-scripts tools/buildbot tools/dist
 
-%if %{?_with_psvn:1}%{!?_with_psvn:0}
+%if %{with_psvn}
 # Install psvn for emacs and xemacs
 %{__install} -Dp -m0644 %{SOURCE4} %{buildroot}%{_datadir}/emacs/site-lisp/psvn.el
 %{__install} -Dp -m0644 %{SOURCE4} %{buildroot}%{_datadir}/xemacs/site-packages/lisp/psvn.el
@@ -403,7 +391,7 @@ fi
 %{_bindir}/*
 %{_mandir}/man*/*
 %{_sysconfdir}/rc.d/init.d/svnserve
-%if %{?_with_psvn:1}%{!?_with_psvn:0}
+%if %{with_psvn}
 %{_datadir}/emacs/site-lisp/*.el
 %{_datadir}/xemacs/site-packages/lisp/*.el
 %endif
@@ -417,7 +405,7 @@ fi
 %{_libdir}/libsvn_*.so.*
 %exclude %{_libdir}/libsvn_swig_perl*
 %exclude %{_libdir}/libsvn_swig_ruby*
-%if %{?_with_kwallet:1}%{!?_with_kwallet:0}
+%if %{with_kwallet}
 %exclude %{_libdir}/libsvn_auth_kwallet*
 %endif
 %exclude %{_libdir}/libsvn_auth_gnome*
@@ -433,7 +421,7 @@ fi
 
 %files kde
 %defattr(-,root,root)
-%if %{?_with_kwallet:1}%{!?_with_kwallet:0}
+%if %{with_kwallet}
 %{_libdir}/libsvn_auth_kwallet-*.so.*
 %endif
 
