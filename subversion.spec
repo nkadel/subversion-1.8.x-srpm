@@ -1,4 +1,4 @@
-# $Id: subversion.spec,v 1.2 2012/02/14 19:16:14 nkadel Exp nkadel $
+#
 # Authority: dag
 # Upstream: Collabnet <dev$subversion,apache,org>
 
@@ -8,7 +8,7 @@
 
 # Default included settings
 #    Requires bash 4.x
-%global with_bash_completeion 1
+%global with_bash_completion 1
 #    Requires gnome and recent dbus
 %global with_gnome_keyring 1
 #    Requires contemporary java
@@ -33,7 +33,7 @@
 %{?el6:# Tag: rfx}
 ### EL5 ships with subversion-1.6.11
 %{?el5:# Tag: rfx}
-%{?el5: %global with_bash_completeion 0}
+%{?el5: %global with_bash_completion 0}
 %{?el5: %global with_kwallet 0}
 %{?el5: %global with_psvn 0}
 
@@ -43,6 +43,10 @@
 %{?el4: %global make_check 0}
 %{?el4: %global with_kwallet 0}
 %{?el4: %global with_psvn 0}
+%{?el4: %global with_java 0}
+%{?el4: %global with_ruby 0}
+%{?el4: %global with_gnome_keyring 0}
+
 
 %{?el4: %global with_system_neon 0}
 %{?el4: %global with_system_python 0}
@@ -76,16 +80,24 @@ Source3: filter-requires.sh
 Source4: http://www.xsteve.at/prg/emacs/psvn.el
 Source5: psvn-init.el
 Source6: svnserve.init
+
+# The following are needed to build on el4
+Source10: http://www.python.org/ftp/python/%{python_version}/Python-%{python_version}.tar.bz2
+Source11: http://www.webdav.org/neon/neon-%{neon_version}.tar.gz
+
 Patch1: subversion-1.7.0-rpath.patch
 Patch2: subversion-1.7.0-pie.patch
 Patch3: subversion-1.7.0-kwallet.patch
 Patch4: subversion-1.7.2-ruby19.patch
-BuildRequires: apr-devel >= 1.2.7
-BuildRequires: apr-util-devel >= 1.2.7
+Patch11: subversion-1.7.4-apr.patch
+BuildRequires: apr-devel >= 0.9.4
+BuildRequires: apr-util-devel >= 0.9.4
 BuildRequires: autoconf
 BuildRequires: cyrus-sasl-devel
 BuildRequires: db4-devel >= 4.1.25
+%if %{with_gnome_keyring}
 BuildRequires: dbus-devel
+%endif
 BuildRequires: gettext
 # Renamed to libgnome-keyring-devel in FC 17
 BuildRequires: gnome-keyring-devel
@@ -93,12 +105,14 @@ BuildRequires: libtool
 BuildRequires: neon-devel >= 0:0.24.7-1
 BuildRequires: python
 BuildRequires: python-devel
+%if %{with_ruby}
 BuildRequires: ruby
 BuildRequires: ruby-devel
+%endif
 %if %{with_system_sqlite}
 BuildRequires: sqlite-devel >= 3.4.0
 %endif
-BuildRequires: swig >= 1.3.24
+BuildRequires: swig >= 1.3.21-5
 BuildRequires: texinfo
 BuildRequires: which
 # kde4-config forces correct kde4 packages for RHEL 6
@@ -153,6 +167,7 @@ Requires: apr-devel%{?_isa}, apr-util-devel%{?_isa}
 The subversion-devel package includes the libraries and include files
 for developers interacting with the subversion package.
 
+%if %{with_gnome_keyring}
 %package gnome
 Group: Development/Tools
 Summary: GNOME Keyring support for Subversion
@@ -161,6 +176,7 @@ Requires: subversion%{?_isa} = %{version}-%{release}
 %description gnome
 The subversion-gnome package adds support for storing Subversion
 passwords in the GNOME Keyring.
+%endif
 
 %package kde
 Group: Development/Tools
@@ -254,6 +270,7 @@ echo "Setting up included %{SOURCE11}"
 %patch2 -p1 -b .pie
 %patch3 -p1 -b .kwallet
 %patch4 -p1 -b .ruby
+%patch11 -p1 -b .apr
 
 %build
 # Regenerate the buildsystem, so that:
@@ -277,16 +294,21 @@ sed -i 's/-fpie/-fPIE/' Makefile.in
 
 export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 %configure \
+	--disable-mod-activation \
+	--disable-neon-version-check \
 	--with-apr=%{_prefix} \
 	--with-apr-util=%{_prefix} \
-	--with-swig \
-	--with-neon=%{_prefix} \
-	--with-ruby-sitedir=%{ruby_sitearch} \
 	--with-apxs=%{_sbindir}/apxs \
-	--disable-mod-activation \
-	--with-sasl=%{_prefix} \
-	--disable-neon-version-check \
+	--with-berkeley-db \
+%if %{with_system_neon}
+	--with-neon=%{_prefix} \
+%endif
+%if %{with_ruby}
+	--with-ruby-sitedir=%{ruby_sitearch} \
+%endif
+%if %{with_gnome_keyring}
 	--with-gnome-keyring \
+%endif
 %if %{with_java}
 	--enable-javahl \
 	--with-junit=%{_prefix}/share/java/junit.jar \
@@ -296,7 +318,9 @@ export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 %else
 	--without-kwallet \
 %endif
-	--with-berkeley-db
+	--with-sasl=%{_prefix} \
+	--with-swig \
+	--with-editor={_bindir}/vi
 
 # Seems to cause RHEL 5 compilation issues
 #	--disable-static \
@@ -304,7 +328,10 @@ export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 
 make %{?_smp_mflags} all
 make swig-py swig-py-lib %{swigdirs}
-make swig-pl swig-pl-lib swig-rb swig-rb-lib
+make swig-pl swig-pl-lib
+%if %{with_ruby}
+make swig-rb swig-rb-lib
+%endif
 %if %{with_java}
 # javahl-javah does not parallel-make with javahl
 make javahl-java javahl-javah
@@ -313,8 +340,11 @@ make %{?_smp_mflags} javahl
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
-make install install-swig-py install-swig-pl-lib install-swig-rb \
-        DESTDIR=$RPM_BUILD_ROOT %{swigdirs}
+make install install-swig-py install-swig-pl-lib \
+     DESTDIR=$RPM_BUILD_ROOT %{swigdirs}
+%if %{with_ruby}
+make install-swig-rb DESTDIR=$RPM_BUILD_ROOT %{swigdirs}
+%endif
 %if %{with_java}
 make install-javahl-java install-javahl-lib javahl_javadir=%{_javadir} DESTDIR=$RPM_BUILD_ROOT
 %endif
@@ -377,9 +407,11 @@ sed -i "/^dependency_libs/{
      s,%{_libdir}/lib[^a][^p][^r][^ ']*.la, ,g;
      }"  $RPM_BUILD_ROOT%{_libdir}/*.la
 
+%if %{with_bash_completion}
 # Install bash completion
 install -Dpm 644 tools/client-side/bash_completion \
         $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/%{name}
+%endif
 
 %find_lang %{name}
 
@@ -438,7 +470,9 @@ fi
 %{_datadir}/emacs/site-lisp/*.el
 %{_datadir}/xemacs/site-packages/lisp/*.el
 %endif
+%if %{with_bash_completion}
 %{_sysconfdir}/bash_completion.d
+%endif
 %dir %{_sysconfdir}/subversion
 %exclude %{_mandir}/man*/*::*
 
@@ -451,16 +485,20 @@ fi
 %if %{with_kwallet}
 %exclude %{_libdir}/libsvn_auth_kwallet*
 %endif
+%if %{with_gnome_keyring}
 %exclude %{_libdir}/libsvn_auth_gnome*
+%endif
 
 %files python
 %defattr(-,root,root)
 %{python_sitearch}/svn
 %{python_sitearch}/libsvn
 
+%if %{with_gnome_keyring}
 %files gnome
 %defattr(-,root,root)
 %{_libdir}/libsvn_auth_gnome_keyring-*.so.*
+%endif
 
 %files kde
 %defattr(-,root,root)
