@@ -105,6 +105,11 @@ BuildRequires: gettext
 BuildRequires: dbus-devel
 # Renamed to libgnome-keyring-devel in FC 17
 %endif
+%if %{with_kwallet}
+# kde4-config forces correct kde4 packages for RHEL 6
+BuildRequires: /usr/bin/kde4-config
+BuildRequires: kdelibs-devel >= 4.0.0
+%endif
 BuildRequires: gnome-keyring-devel
 BuildRequires: libtool
 %if %{with_system_neon}
@@ -122,11 +127,7 @@ BuildRequires: sqlite-devel >= 3.4.0
 BuildRequires: swig >= 1.3.21-5
 BuildRequires: texinfo
 BuildRequires: which
-# kde4-config forces correct kde4 packages for RHEL 6
-%if %{with_kwallet}
-BuildRequires: /usr/bin/kde4-config
-BuildRequires: kdelibs-devel >= 4.0.0
-%endif
+BuildRequires: zlib-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: svn = %{version}-%{release}
 Requires: subversion-libs%{?_isa} = %{version}-%{release}
@@ -499,7 +500,9 @@ fi
 %doc LICENSE
 %{_libdir}/libsvn_*.so.*
 %exclude %{_libdir}/libsvn_swig_perl*
+%if %{with_ruby}
 %exclude %{_libdir}/libsvn_swig_ruby*
+%endif
 %if %{with_kwallet}
 %exclude %{_libdir}/libsvn_auth_kwallet*
 %endif
