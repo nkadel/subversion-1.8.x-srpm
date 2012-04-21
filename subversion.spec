@@ -1,6 +1,6 @@
 #
 # Authority: dag
-# Upstream: Collabnet <dev$subversion,apache,org>
+# Upstream: CollabNet <dev$subversion,apache,org>
 
 %{?dtag: %{expand: %%global %dtag 1}}
 
