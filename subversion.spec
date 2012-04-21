@@ -62,7 +62,12 @@
 
 %global perl_vendorarch %(eval "`%{__perl} -V:installvendorarch`"; echo $installvendorarch)
 
+%if %{with_ruby}
+# Define this just like __perl and __python
+%{?!__ruby: %global __ruby %{_bindir}/ruby}
+
 %{!?ruby_sitearch: %global ruby_sitearch %(ruby -rrbconfig -e 'puts Config::CONFIG["sitearchdir"]')}
+%endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
@@ -95,14 +100,16 @@ BuildRequires: apr-util-devel >= 0.9.4
 BuildRequires: autoconf
 BuildRequires: cyrus-sasl-devel
 BuildRequires: db4-devel >= 4.1.25
+BuildRequires: gettext
 %if %{with_gnome_keyring}
 BuildRequires: dbus-devel
-%endif
-BuildRequires: gettext
 # Renamed to libgnome-keyring-devel in FC 17
+%endif
 BuildRequires: gnome-keyring-devel
 BuildRequires: libtool
+%if %{with_system_neon}
 BuildRequires: neon-devel >= 0:0.24.7-1
+%endif
 BuildRequires: python
 BuildRequires: python-devel
 %if %{with_ruby}
@@ -231,6 +238,7 @@ BuildRequires: junit
 This package includes the JNI bindings to the Subversion libraries.
 %endif
 
+%if %{with_ruby}
 %package ruby
 Group: Development/Libraries
 Summary: Ruby bindings to the Subversion libraries
@@ -242,6 +250,7 @@ Requires: ruby(abi) = 1.8
 
 %description ruby
 This package includes the Ruby bindings to the Subversion libraries.
+%endif
 
 %prep
 %setup -q
@@ -273,6 +282,15 @@ echo "Setting up included %{SOURCE11}"
 %patch11 -p1 -b .apr
 
 %build
+%if !%{with_system_python}
+# build python 2.4 and use it if target is too old
+pushd Python-%{python_version}
+%configure
+make
+export PYTHON=${PWD}/python
+popd
+%endif
+
 # Regenerate the buildsystem, so that:
 #  1) patches applied to configure.in take effect
 #  2) the swig bindings are regenerated using the system swig
@@ -385,8 +403,10 @@ find $RPM_BUILD_ROOT%{_libdir}/perl5 -type f -perm 555 -print0 |
 # unnecessary libraries for swig bindings
 rm -f ${RPM_BUILD_ROOT}%{_libdir}/libsvn_swig_*.{so,la,a}
 
+%if %{with_ruby}
 # Remove unnecessary ruby libraries
 rm -f ${RPM_BUILD_ROOT}%{ruby_sitearch}/svn/ext/*.*a
+%endif
 
 # Trim what goes in docdir
 rm -rf tools/*/*.in tools/test-scripts tools/buildbot tools/dist
@@ -442,20 +462,18 @@ if [ $1 = 0 ]; then
 fi
 
 %post libs -p /sbin/ldconfig
-
 %postun libs -p /sbin/ldconfig
 
 %post perl -p /sbin/ldconfig
-
 %postun perl -p /sbin/ldconfig
 
+%if %{with_ruby}
 %post ruby -p /sbin/ldconfig
-
 %postun ruby -p /sbin/ldconfig
+%endif
 
 %if %{with_java}
 %post javahl -p /sbin/ldconfig
-
 %postun javahl -p /sbin/ldconfig
 %endif
 
@@ -531,10 +549,12 @@ fi
 %{_libdir}/libsvn_swig_perl*
 %{_mandir}/man*/*::*
 
+%if %{with_ruby}
 %files ruby
 %defattr(-,root,root,-)
 %{_libdir}/libsvn_swig_ruby*
 %{ruby_sitearch}/svn
+%endif
 
 %if %{with_java}
 %files javahl
