@@ -100,17 +100,22 @@ BuildRequires: apr-util-devel >= 0.9.4
 BuildRequires: autoconf
 BuildRequires: cyrus-sasl-devel
 BuildRequires: db4-devel >= 4.1.25
+# More general requirement, file-devel is in file in some releases
+#BuildRequires: file-devel
+BuildRequires: /usr/include/magic.h
 BuildRequires: gettext
 %if %{with_gnome_keyring}
+# Only used for gnome-keyring
 BuildRequires: dbus-devel
-# Renamed to libgnome-keyring-devel in FC 17
+# More general requirement: gnome-keyring-devel or libgnome-keyring-devel
+#BuildRequires: libgnome-keyring-devel
+BuildRequires: /usr/include/gnome-keyring-1/gnome-keyring.h
 %endif
 %if %{with_kwallet}
 # kde4-config forces correct kde4 packages for RHEL 6
 BuildRequires: /usr/bin/kde4-config
 BuildRequires: kdelibs-devel >= 4.0.0
 %endif
-BuildRequires: gnome-keyring-devel
 BuildRequires: libtool
 %if %{with_system_neon}
 BuildRequires: neon-devel >= 0:0.24.7-1
