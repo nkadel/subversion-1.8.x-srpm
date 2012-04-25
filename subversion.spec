@@ -107,9 +107,7 @@ BuildRequires: gettext
 %if %{with_gnome_keyring}
 # Only used for gnome-keyring
 BuildRequires: dbus-devel
-# More general requirement: gnome-keyring-devel or libgnome-keyring-devel
-#BuildRequires: libgnome-keyring-devel
-BuildRequires: /usr/include/gnome-keyring-1/gnome-keyring.h
+BuildRequires: gnome-keyring-devel
 %endif
 %if %{with_kwallet}
 # kde4-config forces correct kde4 packages for RHEL 6
@@ -577,6 +575,8 @@ fi
   defined as 0 or 1
 - Synchronize numerous layout bits between 1.6.18 and 1.7.4 .spec files
 - Update psvn.el, and synchronize filter-requires.sh
+- Incorporate subversion.conf from Fedora 17, but with modules
+  not enabled by default
 
 * Mon Apr 09 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.4-0.2
 - Synchronize filter-requires.sh with 1.6.17 SRPM.
