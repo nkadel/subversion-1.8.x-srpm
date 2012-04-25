@@ -74,7 +74,7 @@
 Summary: A Modern Concurrent Version Control System
 Name: subversion
 Version: 1.7.4
-Release: 0.3%{?dist}
+Release: 0.4%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -572,6 +572,12 @@ fi
 %endif
 
 %changelog
+* Tue Apr 24 2012  Nico Kadel-Garcia <nkadel@gmail.com> - 1.6.18-0.2
+- Lots of "_with_" arguments, defined and undefiled to use "with_" syntax
+  defined as 0 or 1
+- Synchronize numerous layout bits between 1.6.18 and 1.7.4 .spec files
+- Update psvn.el, and synchronize filter-requires.sh
+
 * Mon Apr 09 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.4-0.2
 - Synchronize filter-requires.sh with 1.6.17 SRPM.
 
