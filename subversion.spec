@@ -26,13 +26,16 @@
 %global with_system_sqlite 1
 
 # Define as 1 to run test suite,
-# fails on older OS's, takes an hour to run
+# fails on older OS's, takes an extra hour to run
+#%global make_check 1
 %global make_check 0
 
 ### EL6 ships with subversion-1.6.11
 %{?el6:# Tag: rfx}
 ### EL5 ships with subversion-1.6.11
 %{?el5:# Tag: rfx}
+# Fails on a few tests
+%{?el5: %global make_check 0}
 %{?el5: %global with_bash_completion 0}
 %{?el5: %global with_kwallet 0}
 %{?el5: %global with_psvn 0}
@@ -40,13 +43,14 @@
 %{?el5: %global with_system_sqlite 0}
 ### EL4 ships with subversion-1.1.4
 %{?el4:# Tag: rfx}
+# Fails on a few tests
 %{?el4: %global make_check 0}
+%{?el4: %global with_bash_completion 0}
+%{?el4: %global with_gnome_keyring 0}
+%{?el4: %global with_java 0}
 %{?el4: %global with_kwallet 0}
 %{?el4: %global with_psvn 0}
-%{?el4: %global with_java 0}
 %{?el4: %global with_ruby 0}
-%{?el4: %global with_gnome_keyring 0}
-
 
 %{?el4: %global with_system_neon 0}
 %{?el4: %global with_system_python 0}
