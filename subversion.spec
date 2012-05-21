@@ -77,12 +77,13 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.7.4
-Release: 0.4%{?dist}
+Version: 1.7.5
+Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
-Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
+#Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
+Source0: http://www.globalish.com/am/subversion/subversion/subversion-%{version}.tar.bz2
 Source1: subversion.conf
 Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
 Source3: filter-requires.sh
@@ -574,7 +575,11 @@ fi
 %endif
 
 %changelog
-* Tue Apr 24 2012  Nico Kadel-Garcia <nkadel@gmail.com> - 1.6.18-0.2
+* Sun May 21 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.5-0.1
+- Update to 1.7.5
+- Change URL for subversion tarball source.
+
+* Tue Apr 24 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.4-0.4
 - Lots of "_with_" arguments, defined and undefiled to use "with_" syntax
   defined as 0 or 1
 - Synchronize numerous layout bits between 1.6.18 and 1.7.4 .spec files
