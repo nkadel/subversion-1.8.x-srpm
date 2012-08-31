@@ -2,6 +2,9 @@
 # Build mock and local RPM versions of tools
 #
 
+# Assure that sorting is case sensitive
+LANG=C
+
 MOCKS+=epel-6-i386
 MOCKS+=epel-5-i386
 MOCKS+=epel-4-i386
@@ -10,25 +13,41 @@ MOCKS+=epel-6-x86_64
 MOCKS+=epel-5-x86_64
 MOCKS+=epel-4-x86_64
 
-all:: $(MOCKS)
+SPEC := `ls *.spec | head -1`
+PKGNAME := "`ls *.spec | head -1 | sed 's/.spec$$//g'`"
 
-srpm:: subversion.spec FORCE
-	rm -f *.src.rpm
+all:: verifyspec $(MOCKS)
+
+# Oddness to get deduced .spec file verified
+verifyspec:: FORCE
+	@if [ ! -e $(SPEC) ]; then \
+	    echo Error: SPEC file $(SPEC) not found, exiting; \
+	    exit 1; \
+	fi
+
+srpm:: verifyspec FORCE
+	@echo "Building SRPM with $(SPEC)"
+	rm -f $(PKGNAME)*.src.rpm
 	rpmbuild --define '_sourcedir $(PWD)' \
 		--define '_srcrpmdir $(PWD)' \
-		-bs subversion.spec --nodeps
+		-bs $(SPEC) --nodeps
 
 build:: srpm FORCE
-	rpmbuild --rebuild subversion*.src.rpm
+	rpmbuild --rebuild `ls *.src.rpm | grep -v ^epel-`
 
-$(MOCKS):: subversion.spec FORCE
-	rm -rf $@
-	mock -r $@ --sources=$(PWD) --resultdir=$(PWD)/$@ \
-		--buildsrpm --spec=subversion.spec
-	name=`basename $@/*.src.rpm` && \
-		/bin/mv $@/$$name $@.src.rpm && \
-		rm -rf $@ && \
-		mock -r $@ --resultdir=$(PWD)/$@ $@.src.rpm
+$(MOCKS):: verifyspec FORCE
+	@echo "Building $@ RPMS with $(SPEC)"
+	@rm -rf $@
+	mock -q -r $@ --sources=$(PWD) \
+		--resultdir=$(PWD)/$@ \
+		--buildsrpm --spec=$(SPEC)
+	@echo "Storing $@/*.src.rpm in $@.rpm"
+	/bin/mv $@/*.src.rpm $@.src.rpm
+	@echo "Actally building RPMS in $@"
+	@rm -rf $@
+	mock -q -r $@ \
+	     --resultdir=$(PWD)/$@ \
+	     $@.src.rpm
 
 mock:: $(MOCKS)
 
