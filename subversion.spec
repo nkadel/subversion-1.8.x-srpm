@@ -77,13 +77,12 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.7.5
+Version: 1.7.6
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
-#Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
-Source0: http://www.globalish.com/am/subversion/subversion/subversion-%{version}.tar.bz2
+Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
 Source1: subversion.conf
 Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
 Source3: filter-requires.sh
@@ -261,6 +260,16 @@ Requires: ruby(abi) = 1.8
 This package includes the Ruby bindings to the Subversion libraries.
 %endif
 
+%package tools
+Group: Development/Tools
+Summary: Tools for Subversion Version Control system
+#Requires: Uncertain requirements
+
+%description tools
+This package  package include %{_bindir}/svn-tools components
+such as diff3, diff4 snd svnmucc tools built from the %{name}
+tools directory.
+
 %prep
 %setup -q
 
@@ -352,6 +361,15 @@ export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 # Seems to cause RHEL 5 compilation issues
 #	--disable-static \
 
+# Pre-replicate tools to tools-doc, to publish scripts to docs
+rm -rf tools-doc
+cp -al tools tools-doc
+# Trim what goes in docdir
+rm -rf tools-doc/*/*.in
+rm -rf tools-doc/buildbot
+rm -rf tools-doc/diff
+rm -rf tools-doc/dist
+rm -rf tools-doc/test-scripts
 
 make %{?_smp_mflags} all
 make swig-py swig-py-lib %{swigdirs}
@@ -379,6 +397,9 @@ make install-javahl-java install-javahl-lib javahl_javadir=%{_javadir} DESTDIR=$
 make pure_vendor_install -C subversion/bindings/swig/perl/native \
         PERL_INSTALL_ROOT=$RPM_BUILD_ROOT
 install -m 755 -d ${RPM_BUILD_ROOT}%{_sysconfdir}/subversion
+
+# Added to install /usr/bin/svn-tools components, not enabled by default
+make install-tools DESTDIR=$RPM_BUILD_ROOT
 
 # Add subversion.conf configuration file into httpd/conf.d directory.
 install -m 755 -d ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d
@@ -417,9 +438,6 @@ rm -f ${RPM_BUILD_ROOT}%{_libdir}/libsvn_swig_*.{so,la,a}
 rm -f ${RPM_BUILD_ROOT}%{ruby_sitearch}/svn/ext/*.*a
 %endif
 
-# Trim what goes in docdir
-rm -rf tools/*/*.in tools/test-scripts tools/buildbot tools/dist
-
 %if %{with_psvn}
 # Install psvn for emacs and xemacs
 %{__install} -Dp -m0644 %{SOURCE4} %{buildroot}%{_datadir}/emacs/site-lisp/psvn.el
@@ -452,6 +470,7 @@ export MALLOC_PERTURB_=171 MALLOC_CHECK_=3
 export LIBC_FATAL_STDERR_=1
 make check check-swig-pl check-swig-py CLEANUP=yes
 # check-swig-rb omitted: it runs svnserve
+#make check-swig-rb CLEANUP=yes
 %if %{with_java}
 make check-javahl
 %endif
@@ -491,6 +510,7 @@ fi
 %doc BUGS CHANGES COMMITTERS INSTALL LICENSE NOTICE README
 %doc tools mod_authz_svn-INSTALL
 %{_bindir}/*
+%exclude %{_bindir}/svn-tools
 %{_mandir}/man*/*
 %{_sysconfdir}/rc.d/init.d/svnserve
 %if %{with_psvn}
@@ -550,6 +570,7 @@ fi
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/subversion.conf
 %{_libdir}/httpd/modules/mod_dav_svn.so
 %{_libdir}/httpd/modules/mod_authz_svn.so
+# mod_dontdothat.so is built as part of tools, but belongs with mod_dav_svn
 %{_libdir}/httpd/modules/mod_dontdothat.so
 %doc tools/server-side/mod_dontdothat/README
 
@@ -574,7 +595,18 @@ fi
 %{_javadir}/svn-javahl.jar
 %endif
 
+%files tools
+%defattr(-,root,root,-)
+%doc tools-doc
+%{_bindir}/svn-tools
+
 %changelog
+* Wed Aug 15 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.5-0.1
+- Update to 1.7.6
+- Revert URL for subversion tarball source.
+- Add 'install-tools' to install targets, for new subversion-tools packagte,
+  also provides mod_dontdothat.so
+
 * Sun May 21 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.5-0.1
 - Update to 1.7.5
 - Change URL for subversion tarball source.
