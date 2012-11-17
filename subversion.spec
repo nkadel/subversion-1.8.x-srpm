@@ -77,8 +77,8 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.7.6
-Release: 0.3%{?dist}
+Version: 1.7.7
+Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -601,6 +601,9 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Sun Oct 21 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.7-0.1
+- Update version number.
+
 * Wed Aug 30 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.6-0.3
 - Update version number.
 
