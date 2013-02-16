@@ -78,7 +78,7 @@
 Summary: A Modern Concurrent Version Control System
 Name: subversion
 Version: 1.7.8
-Release: 0.1%{?dist}
+Release: 0.2%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -601,6 +601,9 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Sat Feb 16 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.8-0.2
+- Roll back apr version requirements to 0.9.4 for RHEL 4 compatibility.
+
 * Thu Dec 20 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.8-0.1
 - Update version number
 
