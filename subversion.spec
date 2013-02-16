@@ -158,7 +158,7 @@ compelling replacement for CVS.
 Group: Development/Tools
 Summary: Libraries for Subversion Version Control system
 # APR 1.3.x interfaces are required
-Conflicts: apr%{?_isa} < 1.3.0
+Conflicts: apr%{?_isa} < 0.9.4
 
 %description libs
 The subversion-libs package includes the essential shared libraries
