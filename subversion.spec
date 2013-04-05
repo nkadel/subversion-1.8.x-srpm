@@ -303,7 +303,7 @@ echo "Setting up included %{SOURCE11}"
 %if %{with_system_python}
 ./autogen.sh --release
 %else
-aclol
+aclocal
 autoconf
 %endif
 
