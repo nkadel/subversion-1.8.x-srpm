@@ -77,8 +77,8 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.7.8
-Release: 0.2%{?dist}
+Version: 1.7.9
+Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -91,7 +91,6 @@ Source5: psvn-init.el
 Source6: svnserve.init
 
 # The following are needed to build on el4
-Source10: http://www.python.org/ftp/python/%{python_version}/Python-%{python_version}.tar.bz2
 Source11: http://www.webdav.org/neon/neon-%{neon_version}.tar.gz
 
 Patch1: subversion-1.7.0-rpath.patch
@@ -273,19 +272,14 @@ tools directory.
 %prep
 %setup -q
 
+# Old Subversion releases had traces of these
+%{__rm} -rf neon apr apr-util neon serf sqlite-amalgamation
+
 %if !%{with_system_sqlite}
 echo "Setting up included %{SOURCE2}"
 %setup -q -T -D -a 2
 %{__mv} sqlite-%{sqlite_amalgamation_version} sqlite-amalgamation
 %endif
-
-%if !%{with_system_python}
-echo "Setting up included %{SOURCE10}"
-%setup -q -T -D -a 10
-%endif
-
-# Old Subversion releases had traces of these
-%{__rm} -rf neon apr apr-util
 
 %if !%{with_system_neon}
 echo "Setting up included %{SOURCE11}"
@@ -300,21 +294,18 @@ echo "Setting up included %{SOURCE11}"
 %patch11 -p1 -b .apr
 
 %build
-%if !%{with_system_python}
-# build python 2.4 and use it if target is too old
-pushd Python-%{python_version}
-%configure
-make
-export PYTHON=${PWD}/python
-popd
-%endif
-
 # Regenerate the buildsystem, so that:
 #  1) patches applied to configure.in take effect
 #  2) the swig bindings are regenerated using the system swig
 # (2) is not ideal since typically upstream test with a different
 # swig version
+# Do not do full autogen.sh with old Python releases
+%if %{with_system_python}
 ./autogen.sh --release
+%else
+aclol
+autoconf
+%endif
 
 # fix shebang lines, #111498
 perl -pi -e 's|/usr/bin/env perl -w|/usr/bin/perl -w|' tools/hook-scripts/*.pl.in
@@ -601,6 +592,11 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Thu Apr 04 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.9-0.1
+- Update to 1.7.9
+- Stop requiring local Python build to run autogen.sh, just use 'aclol'
+  for older systems.
+
 * Sat Feb 16 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.8-0.2
 - Roll back apr version requirements to 0.9.4 for RHEL 4 compatibility.
 
