@@ -1,4 +1,4 @@
-This github repo includes tools for building subversion-1.7.6
+This github repo includes tools for building subversion-1.7.9
 RPM's. It is based on the Fedora 17 subversion-1.7.2 package, and
 includes tweaks merged from Repoforge's older subversion-1.6.x
 packages for compilation on multiple versions of RHEL or Fedora.
@@ -22,8 +22,12 @@ so that needs to be built separately.
 The bash-completion utility was installed rather oddly: that has been
 cleaned up.
 
+RHEL 4 is no longer supported. The tool chain and the necessary build
+components, such as Python 2.4, sqlite, swig, , have gotten
+unreasonable to maintain and build locally.
+
 The following components are not compatible with older RHEL releases,
-such as RHEL 5 or RHEL 4.
+such as RHEL 5 or RHEl 4.
 
         psvn - No longer compatible with older Emacs or Xemacs.
 		Not included in subversion package for old OS.

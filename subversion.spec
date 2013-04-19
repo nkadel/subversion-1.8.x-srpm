@@ -346,6 +346,7 @@ export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 	--without-kwallet \
 %endif
 	--with-sasl=%{_prefix} \
+	--without-serf \
 	--with-swig \
 	--with-editor={_bindir}/vi
 
