@@ -22,8 +22,10 @@ so that needs to be built separately.
 The bash-completion utility was installed rather oddly: that has been
 cleaned up.
 
+RHEL 5 is no longer supported. Backporting Python 2.6 is too awkward.
+
 RHEL 4 is no longer supported. The tool chain and the necessary build
-components, such as Python 2.4, sqlite, swig, , have gotten
+components, such as Python 2.6, sqlite, swig, , have gotten
 unreasonable to maintain and build locally.
 
 The following components are not compatible with older RHEL releases,
