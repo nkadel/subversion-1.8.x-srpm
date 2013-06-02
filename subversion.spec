@@ -77,7 +77,7 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.7.9
+Version: 1.7.10
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
@@ -593,6 +593,9 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Sun Jun 02 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.10-0.1
+- Update to 1.7.10
+
 * Thu Apr 04 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.9-0.1
 - Update to 1.7.9
 - Stop requiring local Python build to run autogen.sh, just use 'aclol'
