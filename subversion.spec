@@ -82,7 +82,7 @@ Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
-Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
+Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.gz
 Source1: subversion.conf
 Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
 Source3: filter-requires.sh
