@@ -37,8 +37,6 @@
 
 # New sqlite requirements, may be working in RHEL 7
 %{?el6: %global with_system_sqlite 0}
-# Not working yet in RHEL 6
-%{?el6: %global with_kwallet 0}
 
 # Fails on a few tests
 %{?el5: %global make_check 0}
@@ -97,7 +95,7 @@ Source6: svnserve.init
 
 Patch1: subversion-1.7.0-rpath.patch
 Patch2: subversion-1.7.0-pie.patch
-#Patch3: subversion-1.7.0-kwallet.patch
+Patch3: subversion-1.8.0-kwallet.patch
 #Patch4: subversion-1.7.2-ruby19.patch
 #Patch11: subversion-1.7.4-apr.patch
 BuildRequires: apr-devel >= 0.9.4
@@ -136,6 +134,7 @@ BuildRequires: which
 BuildRequires: zlib-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: svn = %{version}-%{release}
+Requires: libserf{?_isa}
 Requires: subversion-libs%{?_isa} = %{version}-%{release}
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig, /sbin/service
@@ -283,7 +282,7 @@ echo "Setting up included %{SOURCE2}"
 
 %patch1 -p1 -b .rpath
 %patch2 -p1 -b .pie
-#%patch3 -p1 -b .kwallet
+%patch3 -p1 -b .kwallet
 #%patch4 -p1 -b .ruby
 #%patch11 -p1 -b .apr
 
