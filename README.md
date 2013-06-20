@@ -1,13 +1,13 @@
-Subversion 1.8.x SRPM building tools
-=======
-This github repo includes tools for building subversion-1.7.9
-RPM's. It is based on the Fedora 17 subversion-1.7.2 package, and
-includes tweaks merged from Repoforge's older subversion-1.6.x
-packages for compilation on multiple versions of RHEL or Fedora.
+This github repo includes tools for building subversion-1.8.x
+RPM's. It is based on the Fedora 17 subversion-1.7.2 package, and has
+been heavily edited to support RHEL backports and better handling of
+features for the different releases. Those tweaks are based especially
+on Repoforge's older older subversion-1.6.x packages for compilation
+on multiple versions of RHEL or Fedora.
 
-There is a new component, "mod_dondothat" that. This is packaged
-with mod_dav_svn, and provides limitations on server-burdensome
-operations such as checking out entire repository trees.
+There is a new component, "mod_dondothat". This is packaged with
+mod_dav_svn, and provides limitations on server-burdensome operations
+such as checking out entire repository trees.
 
 There is a new package added by me, "subversion-tools", which holds
 the other packages in /usr/bin/svn-tools which are now built and
@@ -43,3 +43,4 @@ such as RHEL 5 or RHEl 4.
 
 	perl-devel - Spurious dependency for compilation, does not
 		exist on RHEL 5.
+
