@@ -21,8 +21,8 @@
 %global with_ruby 1
 
 # Use system versions where feasible, included tarballs when not
-%global with_system_neon 1
 %global with_system_python 1
+# Subversion 1.8.x requires much more recent sqlite
 %global with_system_sqlite 1
 
 # Define as 1 to run test suite,
@@ -34,6 +34,12 @@
 %{?el6:# Tag: rfx}
 ### EL5 ships with subversion-1.6.11
 %{?el5:# Tag: rfx}
+
+# New sqlite requirements, may be working in RHEL 7
+%{?el6: %global with_system_sqlite 0}
+# Not working yet in RHEL 6
+%{?el6: %global with_kwallet 0}
+
 # Fails on a few tests
 %{?el5: %global make_check 0}
 %{?el5: %global with_bash_completion 0}
@@ -52,14 +58,12 @@
 %{?el4: %global with_psvn 0}
 %{?el4: %global with_ruby 0}
 
-%{?el4: %global with_system_neon 0}
 %{?el4: %global with_system_python 0}
 %{?el4: %global with_system_sqlite 0}
 
 # Local tarballs used only when system components are too old
-%global neon_version 0.28.4
 %global python_version 2.4.6
-%global sqlite_amalgamation_version 3.6.22
+%global sqlite_amalgamation_version 3071700
 
 # set JDK path to build javahl; default for JPackage
 %global jdk_path /usr/lib/jvm/java
@@ -77,27 +81,25 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.7.10
+Version: 1.8.0
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
 Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.gz
 Source1: subversion.conf
-Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
+#Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
+Source2: http://www.sqlite.org/2013/sqlite-autoconf-%{sqlite_amalgamation_version}.tar.gz
 Source3: filter-requires.sh
 Source4: http://www.xsteve.at/prg/emacs/psvn.el
 Source5: psvn-init.el
 Source6: svnserve.init
 
-# The following are needed to build on el4
-Source11: http://www.webdav.org/neon/neon-%{neon_version}.tar.gz
-
 Patch1: subversion-1.7.0-rpath.patch
 Patch2: subversion-1.7.0-pie.patch
-Patch3: subversion-1.7.0-kwallet.patch
-Patch4: subversion-1.7.2-ruby19.patch
-Patch11: subversion-1.7.4-apr.patch
+#Patch3: subversion-1.7.0-kwallet.patch
+#Patch4: subversion-1.7.2-ruby19.patch
+#Patch11: subversion-1.7.4-apr.patch
 BuildRequires: apr-devel >= 0.9.4
 BuildRequires: apr-util-devel >= 0.9.4
 BuildRequires: autoconf
@@ -118,9 +120,7 @@ BuildRequires: /usr/bin/kde4-config
 BuildRequires: kdelibs-devel >= 4.0.0
 %endif
 BuildRequires: libtool
-%if %{with_system_neon}
-BuildRequires: neon-devel >= 0:0.24.7-1
-%endif
+BuildRequires: libserf-devel >= 1.2.1
 BuildRequires: python
 BuildRequires: python-devel
 %if %{with_ruby}
@@ -278,20 +278,14 @@ tools directory.
 %if !%{with_system_sqlite}
 echo "Setting up included %{SOURCE2}"
 %setup -q -T -D -a 2
-%{__mv} sqlite-%{sqlite_amalgamation_version} sqlite-amalgamation
-%endif
-
-%if !%{with_system_neon}
-echo "Setting up included %{SOURCE11}"
-%setup -q -T -D -a 11
-%{__mv} neon-%{neon_version} neon
+%{__mv} sqlite-autoconf-%{sqlite_amalgamation_version} sqlite-amalgamation
 %endif
 
 %patch1 -p1 -b .rpath
 %patch2 -p1 -b .pie
-%patch3 -p1 -b .kwallet
-%patch4 -p1 -b .ruby
-%patch11 -p1 -b .apr
+#%patch3 -p1 -b .kwallet
+#%patch4 -p1 -b .ruby
+#%patch11 -p1 -b .apr
 
 %build
 # Regenerate the buildsystem, so that:
@@ -322,14 +316,11 @@ sed -i 's/-fpie/-fPIE/' Makefile.in
 export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 %configure \
 	--disable-mod-activation \
-	--disable-neon-version-check \
 	--with-apr=%{_prefix} \
 	--with-apr-util=%{_prefix} \
 	--with-apxs=%{_sbindir}/apxs \
 	--with-berkeley-db \
-%if %{with_system_neon}
-	--with-neon=%{_prefix} \
-%endif
+	--with-editor={_bindir}/vi \
 %if %{with_ruby}
 	--with-ruby-sitedir=%{ruby_sitearch} \
 %endif
@@ -346,9 +337,10 @@ export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 	--without-kwallet \
 %endif
 	--with-sasl=%{_prefix} \
-	--without-serf \
+	--with-serf \
 	--with-swig \
-	--with-editor={_bindir}/vi
+	|| (cat config.log; exit 1)
+
 
 # Seems to cause RHEL 5 compilation issues
 #	--disable-static \
@@ -560,10 +552,6 @@ fi
 %files -n mod_dav_svn
 %defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/subversion.conf
-%{_libdir}/httpd/modules/mod_dav_svn.so
-%{_libdir}/httpd/modules/mod_authz_svn.so
-# mod_dontdothat.so is built as part of tools, but belongs with mod_dav_svn
-%{_libdir}/httpd/modules/mod_dontdothat.so
 %doc tools/server-side/mod_dontdothat/README
 
 %files perl
@@ -593,6 +581,10 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Wed Jun 19 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.1
+- Update to 1.8.0
+- Replace use of neon with libserf 1.2.1
+
 * Sun Jun 02 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.10-0.1
 - Update to 1.7.10
 
