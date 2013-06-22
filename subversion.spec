@@ -295,6 +295,7 @@ find tools/server-side/svnpubsub/rc.d -type l -exec rm -f {} \;
 find tools/server-side/svnpubsub/rc.d -type f | sort | while read name; do
     chmod a-x "$name"
 done
+# Canonicalize path tp python, correctly
 for name in tools/server-side/svnpubsub/*.py; do
     sed -i 's|#!/usr/local/bin/python|#!/usr/bin/env python|g' $name
 done
