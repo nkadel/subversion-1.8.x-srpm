@@ -92,6 +92,8 @@ Source3: filter-requires.sh
 Source4: http://www.xsteve.at/prg/emacs/psvn.el
 Source5: psvn-init.el
 Source6: svnserve.init
+# Needed complete rewrite
+Source7: get-deps.sh
 
 Patch1: subversion-1.7.0-rpath.patch
 Patch2: subversion-1.7.0-pie.patch
@@ -135,7 +137,7 @@ BuildRequires: which
 BuildRequires: zlib-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: svn = %{version}-%{release}
-Requires: libserf{?_isa}
+Requires: libserf%{?_isa}
 Requires: subversion-libs%{?_isa} = %{version}-%{release}
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig, /sbin/service
@@ -443,6 +445,10 @@ rm -f ${RPM_BUILD_ROOT}%{ruby_sitearch}/svn/ext/*.*a
 %{__install} -Dp -m0644 %{SOURCE4} %{buildroot}%{_datadir}/xemacs/site-packages/lisp/psvn.el
 %endif
 
+# Replace get-deps.sh with working one for RHEL
+%{__mv} get-deps.sh get-deps.sh.rhel
+%{__install} -Dp -m0755 %{SOURCE5} get-deps.sh
+
 # Rename authz_svn INSTALL doc for docdir
 ln -f subversion/mod_authz_svn/INSTALL mod_authz_svn-INSTALL
 
@@ -508,6 +514,7 @@ fi
 %defattr(-,root,root)
 %doc BUGS CHANGES COMMITTERS INSTALL LICENSE NOTICE README
 %doc tools mod_authz_svn-INSTALL
+%doc get-deps.sh
 %{_bindir}/*
 %exclude %{_bindir}/svn-tools
 %{_mandir}/man*/*
