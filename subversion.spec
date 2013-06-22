@@ -299,7 +299,7 @@ find tools/server-side/svnpubsub/rc.d -type f | sort | while read name; do
 done
 # Canonicalize path to python, correctly
 for name in tools/server-side/svnpubsub/*.py; do
-    sed -i 's|#!/usr/local/bin/python|#!/usr/bin/env python|g' $name
+    sed -i 's|#!/usr/local/bin/python|#!/usr/bin/python|g' $name
 done
 
 %build
