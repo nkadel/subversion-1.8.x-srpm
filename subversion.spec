@@ -291,9 +291,12 @@ echo "Setting up included %{SOURCE2}"
 # Disable binary scripts in svnpubsub, or they get parsed for
 # dependencies on /usr/local/bin/python, /usr/bin/bash, and
 # package dependencies for other operating systems
-find tools/server-side/svnpubsub -type l -exec rm -f {} \;
-find tools/server-side/svnpubsub -type f | sort | while read name; do
-     chmod a-x "$name"
+find tools/server-side/svnpubsub/rc.d -type l -exec rm -f {} \;
+find tools/server-side/svnpubsub/rc.d -type f | sort | while read name; do
+    chmod a-x "$name"
+done
+for name in tools/server-side/svnpubsub/*.py; do
+    sed -i 's|#!/usr/local/bin/python|#!/usr/bin/env python|g' $name
 done
 
 %build
