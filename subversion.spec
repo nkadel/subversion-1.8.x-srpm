@@ -291,7 +291,8 @@ echo "Setting up included %{SOURCE2}"
 # Disable binary scripts in svnpubsub, or they get parsed for
 # dependencies on /usr/local/bin/python, /usr/bin/bash, and
 # package dependencies for other operating systems
-find tools/server-side/svnpubsub -type f ! -type l | sort | while read name; do
+find tools/server-side/svnpubsub -type l -exec rm -f {} \;
+find tools/server-side/svnpubsub -type f | sort | while read name; do
      chmod a-x "$name"
 done
 
@@ -600,6 +601,7 @@ fi
 - Disable plaintext password storage
 - Disable executable scripts in svnpubsub example to avoid non-Linux
   dependencies
+- Delete RHEL inapprpropriate symlinks in sbnpubsub
 - Set Apache module installation directory manually for RHEL
 
 * Wed Jun 19 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.1
