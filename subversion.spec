@@ -80,7 +80,7 @@
 Summary: A Modern Concurrent Version Control System
 Name: subversion
 Version: 1.8.0
-Release: 0.1%{?dist}
+Release: 0.2%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -98,6 +98,7 @@ Patch2: subversion-1.7.0-pie.patch
 Patch3: subversion-1.8.0-kwallet.patch
 #Patch4: subversion-1.7.2-ruby19.patch
 #Patch11: subversion-1.7.4-apr.patch
+Patch12: subversion-1.8.0-svnmucc.patch
 BuildRequires: apr-devel >= 0.9.4
 BuildRequires: apr-util-devel >= 0.9.4
 BuildRequires: autoconf
@@ -285,6 +286,14 @@ echo "Setting up included %{SOURCE2}"
 %patch3 -p1 -b .kwallet
 #%patch4 -p1 -b .ruby
 #%patch11 -p1 -b .apr
+%patch12 -p1 -b .svnmucc
+
+# Disable binary scripts in svnpubsub, or they get parsed for
+# dependencies on /usr/local/bin/python, /usr/bin/bash, and
+# package dependencies for other operating systems
+find tools/server-side/svnpubsub -type f ! -type l | sort | while read name; do
+     chmod a-x "$name"
+done
 
 %build
 # Regenerate the buildsystem, so that:
@@ -315,6 +324,8 @@ sed -i 's/-fpie/-fPIE/' Makefile.in
 export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 %configure \
 	--disable-mod-activation \
+	--disable-plaintext-password-storage \
+	--with-apache-libexecdir=%{_libdir}/httpd/modules \
 	--with-apr=%{_prefix} \
 	--with-apr-util=%{_prefix} \
 	--with-apxs=%{_sbindir}/apxs \
@@ -551,6 +562,10 @@ fi
 %files -n mod_dav_svn
 %defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/subversion.conf
+%{_libdir}/httpd/modules/mod_dav_svn.so
+%{_libdir}/httpd/modules/mod_authz_svn.so
+# mod_dontdothat.so is built as part of tools, but belongs with mod_dav_svn
+%{_libdir}/httpd/modules/mod_dontdothat.so
 %doc tools/server-side/mod_dontdothat/README
 
 %files perl
@@ -580,6 +595,13 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Thu Jun 19 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.2
+- Patch svnmucc symlink handling in Makefile.in
+- Disable plaintext password storage
+- Disable executable scripts in svnpubsub example to avoid non-Linux
+  dependencies
+- Set Apache module installation directory manually for RHEL
+
 * Wed Jun 19 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.1
 - Update to 1.8.0
 - Replace use of neon with libserf 1.2.1
