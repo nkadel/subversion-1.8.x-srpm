@@ -80,7 +80,7 @@
 Summary: A Modern Concurrent Version Control System
 Name: subversion
 Version: 1.8.0
-Release: 0.2%{?dist}
+Release: 0.3%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
@@ -98,8 +98,6 @@ Source7: get-deps.sh
 Patch1: subversion-1.7.0-rpath.patch
 Patch2: subversion-1.7.0-pie.patch
 Patch3: subversion-1.8.0-kwallet.patch
-#Patch4: subversion-1.7.2-ruby19.patch
-#Patch11: subversion-1.7.4-apr.patch
 Patch12: subversion-1.8.0-svnmucc.patch
 BuildRequires: apr-devel >= 0.9.4
 BuildRequires: apr-util-devel >= 0.9.4
@@ -607,6 +605,9 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Sat Jul 13 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.3
+- Discard unneeded patches.
+
 * Thu Jun 19 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.2
 - Patch svnmucc symlink handling in Makefile.in
 - Disable plaintext password storage
