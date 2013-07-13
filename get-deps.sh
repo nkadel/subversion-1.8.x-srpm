@@ -31,6 +31,13 @@
 # features already used in the file.  Reviewing the history of changes
 # may be useful as well.
 
+# Base URL for packages, update as needed
+APACHE_MIRROR=http://archive.apache.org/dist
+GTEST_MIRROR=http://googletest.googlecode.com/files
+SERF_MIRROR=http://serf.googlecode.com/files
+SQLITE_MIRROR=http://www.sqlite.org/2013
+ZLIB_MIRROR=http://www.zlib.net
+
 APR_ICONV_VERSION=${APR_ICONV_VERSION:-"1.2.6"}
 APR_VERSION=${APR_VERSION:-"1.4.6"}
 APU_VERSION=${APU_VERSION:-"1.5.1"}
@@ -44,11 +51,11 @@ ZLIB_VERSION=${ZLIB_VERSION:-"1.2.8"}
 APR=apr-${APR_VERSION}
 APR_UTIL=apr-util-${APU_VERSION}
 GTEST=gtest-${GTEST_VERSION}
-GTEST_URL=http://googletest.googlecode.com/files/
 SERF=serf-${SERF_VERSION}
 SQLITE=sqlite-autoconf-$(printf %u%02u%02u%02u $(echo $SQLITE_VERSION | sed -e "s/\./ /g"))
 ZLIB=zlib-${ZLIB_VERSION}
 
+# Not normally downloaded
 HTTPD=httpd-${HTTPD_VERSION}
 APR_ICONV=apr-iconv-${APR_ICONV_VERSION}
 
@@ -59,10 +66,6 @@ HTTP_FETCH=
 [ -z "$HTTP_FETCH" ] && type wget  >/dev/null 2>&1 && HTTP_FETCH="wget -q -nc"
 [ -z "$HTTP_FETCH" ] && type curl  >/dev/null 2>&1 && HTTP_FETCH="curl -sO"
 [ -z "$HTTP_FETCH" ] && type fetch >/dev/null 2>&1 && HTTP_FETCH="fetch -q"
-
-# Need this uncommented if any of the specific versions of the ASF tarballs to
-# be downloaded are no longer available on the general mirrors.
-APACHE_MIRROR=http://archive.apache.org/dist
 
 # helpers
 usage() {
@@ -106,7 +109,7 @@ get_gtest() {
     test -d $BASEDIR/gtest && return
 
     cd $TEMPDIR || return 1
-    $HTTP_FETCH ${GTEST_URL}/${GTEST}.zip
+    $HTTP_FETCH ${GTEST_MIRROR}/${GTEST}.zip
     cd $BASEDIR || return 1
 
     rm -rf gtest && \
@@ -118,7 +121,7 @@ get_serf() {
     test -d $BASEDIR/serf && return
 
     cd $TEMPDIR || return 1
-    $HTTP_FETCH http://serf.googlecode.com/files/$SERF.tar.bz2
+    $HTTP_FETCH $SERF_MIRROR/$SERF.tar.bz2
     cd $BASEDIR || return 1
 
     rm -rf serf && \
@@ -130,8 +133,7 @@ get_sqlite() {
     test -d $BASEDIR/sqlite-amalgamation && return
 
     cd $TEMPDIR || return 1
-    #$HTTP_FETCH http://www.sqlite.org/$SQLITE.tar.gz
-    $HTTP_FETCH http://www.sqlite.org/2013/$SQLITE.tar.gz
+    $HTTP_FETCH $SQLITE_MIRROR/$SQLITE.tar.gz
     cd $BASEDIR || return 1
 
     rm -rf sqlite-amalgamation && \
@@ -143,7 +145,7 @@ get_zlib() {
     test -d $BASEDIR/zlib && return
 
     cd $TEMPDIR || return 1
-    $HTTP_FETCH http://www.zlib.net/$ZLIB.tar.gz
+    $HTTP_FETCH $ZLIB_MIRROR/$ZLIB.tar.gz
     cd $BASEDIR || return 1
 
     rm -rf zlib && \
@@ -156,8 +158,8 @@ get_deps() {
     mkdir -p $TEMPDIR
 
     for i in apr apr-util gtest serf sqlite-amalgamation zlib; do
-      if [ -d $i ]; then
-        echo "Local directory '$i' already exists; the downloaded copy won't be used" >&2
+      if test -d $i; then
+        echo "Local directory '$i' already exists, skipping" >&2
       fi
     done
 
