@@ -79,12 +79,12 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.8.0
-Release: 0.3%{?dist}
+Version: 1.8.1
+Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
 URL: http://subversion.apache.org/
-Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.gz
+Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
 Source1: subversion.conf
 #Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
 Source2: http://www.sqlite.org/2013/sqlite-autoconf-%{sqlite_amalgamation_version}.tar.gz
@@ -98,7 +98,6 @@ Source7: get-deps.sh
 Patch1: subversion-1.7.0-rpath.patch
 Patch2: subversion-1.7.0-pie.patch
 Patch3: subversion-1.8.0-kwallet.patch
-Patch12: subversion-1.8.0-svnmucc.patch
 BuildRequires: apr-devel >= 0.9.4
 BuildRequires: apr-util-devel >= 0.9.4
 BuildRequires: autoconf
@@ -286,7 +285,6 @@ echo "Setting up included %{SOURCE2}"
 %patch3 -p1 -b .kwallet
 #%patch4 -p1 -b .ruby
 #%patch11 -p1 -b .apr
-%patch12 -p1 -b .svnmucc
 
 # Disable binary scripts in svnpubsub, or they get parsed for
 # dependencies on /usr/local/bin/python, /usr/bin/bash, and
@@ -605,6 +603,10 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Wed Jul 24 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.1-0.1
+- Update to 1.8.1 release
+- Discard svnmucc patch, already included upstreasm
+
 * Sat Jul 13 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.3
 - Discard unneeded patches.
 
