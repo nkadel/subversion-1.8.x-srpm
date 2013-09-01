@@ -42,10 +42,9 @@ APR_ICONV_VERSION=${APR_ICONV_VERSION:-"1.2.6"}
 APR_VERSION=${APR_VERSION:-"1.4.6"}
 APU_VERSION=${APU_VERSION:-"1.5.1"}
 GTEST_VERSION=${GTEST_VERSION:-"1.6.0"}
-HTTPD_VERSION=${HTTPD_VERSION:-"2.4.3"}
+HTTPD_VERSION=${HTTPD_VERSION:-"2.4.6"}
 SERF_VERSION=${SERF_VERSION:-"1.2.1"}
 SQLITE_VERSION=${SQLITE_VERSION:-"3.7.17"}
-SQLITE_VERSION_LIST=`echo $SQLITE_VERSION | sed -e 's/\./ /g'`
 ZLIB_VERSION=${ZLIB_VERSION:-"1.2.8"}
 
 APR=apr-${APR_VERSION}
@@ -158,8 +157,8 @@ get_deps() {
     mkdir -p $TEMPDIR
 
     for i in apr apr-util gtest serf sqlite-amalgamation zlib; do
-      if test -d $i; then
-        echo "Local directory '$i' already exists, skipping" >&2
+      if [ -d $i ]; then
+        echo "Local directory '$i' already exists; the downloaded copy won't be used" >&2
       fi
     done
 
