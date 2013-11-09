@@ -333,7 +333,7 @@ export CC=gcc CXX=g++ JAVA_HOME=%{jdk_path} CFLAGS="$RPM_OPT_FLAGS"
 	--with-apr-util=%{_prefix} \
 	--with-apxs=%{_sbindir}/apxs \
 	--with-berkeley-db \
-	--with-editor={_bindir}/vi \
+	--with-editor=%{_bindir}/vi \
 %if %{with_ruby}
 	--with-ruby-sitedir=%{ruby_sitearch} \
 %endif
