@@ -51,7 +51,7 @@ APR=apr-${APR_VERSION}
 APR_UTIL=apr-util-${APU_VERSION}
 GTEST=gtest-${GTEST_VERSION}
 SERF=serf-${SERF_VERSION}
-SQLITE=sqlite-autoconf-$(printf %u%02u%02u%02u $(echo $SQLITE_VERSION | sed -e "s/\./ /g"))
+SQLITE=sqlite-autoconf-`printf %u%02u%02u%02u $(echo $SQLITE_VERSION | sed -e "s/\./ /g"`
 ZLIB=zlib-${ZLIB_VERSION}
 
 # Not normally downloaded
