@@ -199,15 +199,16 @@ if [ $# -gt 0 ]; then
     done
 else
     get_apr
-    #get_apr_util # included as part of get_apr
-    echo "apr-util is built automatically with apr"
-    #get_gtest   # not yet a default package
-    echo "gtest is not yet used. To download, use: $progname gtest"
+    #get_apr_util # run by get_apr
+    #get_gtest
     get_serf
     get_sqlite
     get_zlib
 
     # Comments on packages to install manually
+    echo
+    echo "gtest is not yet used. To download anyway, use:"
+    echo "    $0 gtest"
     get_apr_iconv
     get_httpd
 fi
