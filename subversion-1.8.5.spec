@@ -79,7 +79,7 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.8.4
+Version: 1.8.5
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
@@ -603,6 +603,9 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Mon Nov 25 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.5-0.1
+- Update to 1.8.5 release
+
 * Tue Oct 29 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.4-0.1
 - Update to 1.8.4 release
 
