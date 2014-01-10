@@ -1,9 +1,0 @@
---- subversion-1.8.0/Makefile.in.svnmucc	2013-06-20 00:29:00.502586096 -0400
-+++ subversion-1.8.0/Makefile.in	2013-06-20 22:38:12.958003241 -0400
-@@ -906,5 +906,5 @@
-   test -n "$$SVN_SVNMUCC_IS_SVNSYITF" && \
-   ln -sf svnmucc$(EXEEXT) $(DESTDIR)$(bindir)/svnsyitf$(EXEEXT); \
-   if test "$(DESTDIR)$(bindir)" != "$(DESTDIR)$(toolsdir)"; then \
--    ln -sf $(DESTDIR)$(bindir)/svnmucc$(EXEEXT) $(DESTDIR)$(toolsdir)/svnmucc$(EXEEXT); \
-+    ln -sf $(bindir)/svnmucc$(EXEEXT) $(DESTDIR)$(toolsdir)/svnmucc$(EXEEXT); \
-   fi
