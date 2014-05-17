@@ -234,7 +234,9 @@ This package includes the Perl bindings to the Subversion libraries.
 Group: Development/Libraries
 Summary: JNI bindings to the Subversion libraries
 Requires: subversion%{?_isa} = %{version}-%{release}
-BuildRequires: java-devel-openjdk
+#BuildRequires: java-devel-openjdk
+# Stop playing with 1.6.0! Insist on 1.7.0!!
+BuildRequires: java-devel-openjdk >= 1.7.0
 # JAR repacking requires both zip and unzip in the buildroot
 BuildRequires: zip, unzip
 # For the tests
