@@ -79,7 +79,7 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.8.8
+Version: 1.8.9
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
@@ -236,7 +236,7 @@ Summary: JNI bindings to the Subversion libraries
 Requires: subversion%{?_isa} = %{version}-%{release}
 #BuildRequires: java-devel-openjdk
 # Stop playing with 1.6.0! Insist on 1.7.0!!
-BuildRequires: java-devel-openjdk >= 1.7.0
+BuildRequires: java-1.7.0-openjdk-devel
 # JAR repacking requires both zip and unzip in the buildroot
 BuildRequires: zip, unzip
 # For the tests
@@ -605,6 +605,9 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Sat May 17 2014 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.9-0.1
+- Update to 1.8.9 release
+
 * Thu Feb 20 2014 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.8-0.1
 - Update to 1.8.8 release
 
