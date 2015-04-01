@@ -79,12 +79,12 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.8.10
+Version: 1.8.13
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
-URL: http://subversion.apache.org/
-Source0: http://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
+URL: https://subversion.apache.org/
+Source0: https://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
 Source1: subversion.conf
 #Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
 Source2: http://www.sqlite.org/2013/sqlite-autoconf-%{sqlite_amalgamation_version}.tar.gz
@@ -272,6 +272,8 @@ tools directory.
 
 %prep
 %setup -q
+
+install %{SOURCE1} subversion.conf
 
 # Old Subversion releases had traces of these
 %{__rm} -rf neon apr apr-util neon serf sqlite-amalgamation
@@ -605,6 +607,12 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Tue Mar 31 2015 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.13-0.1
+- Update to 1.8.13 release for security patches
+
+* Mon Dec 15 2014 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.11-0.1
+- Update to 1.8.11 release
+
 * Tue Aug 12 2014 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.10-0.1
 - Update to 1.8.10 release
 
