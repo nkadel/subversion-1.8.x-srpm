@@ -5,10 +5,12 @@
 # Assure that sorting is case sensitive
 LANG=C
 
+#MOCKS+=epel-7-i386
 #MOCKS+=epel-6-i386
 #MOCKS+=epel-5-i386
 #MOCKS+=epel-4-i386
 
+MOCKS+=epel-7-x86_64
 MOCKS+=epel-6-x86_64
 #MOCKS+=epel-5-x86_64
 #MOCKS+=epel-4-x86_64
@@ -27,13 +29,14 @@ verifyspec:: FORCE
 
 srpm:: verifyspec FORCE
 	@echo "Building SRPM with $(SPEC)"
-	rm -f $(PKGNAME)*.src.rpm
-	rpmbuild --define '_sourcedir $(PWD)' \
-		--define '_srcrpmdir $(PWD)' \
-		-bs $(SPEC) --nodeps
+	rm -rf rpmbuild
+	rpmbuild --define '_topdir $(PWD)/rpmbuild' \
+		 --define '_sourcedir $(PWD)' \
+		 -bs $(SPEC) --nodeps
 
 build:: srpm FORCE
-	rpmbuild --rebuild `ls *.src.rpm | grep -v ^epel-`
+	rpmbuild --define '_topdir $(PWD)/rpmbuild' \
+		 --rebuild $(PWD)/rpmbuild/SRPMS/*.src.rpm
 
 $(MOCKS):: verifyspec FORCE
 	@if [ -e $@ -a -n "`find $@ -name \*.rpm`" ]; then \
