@@ -79,7 +79,7 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.8.13
+Version: 1.9.2
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
@@ -95,9 +95,9 @@ Source6: svnserve.init
 # Needed complete rewrite
 Source7: get-deps.sh
 
-Patch1: subversion-1.7.0-rpath.patch
-Patch2: subversion-1.7.0-pie.patch
-Patch3: subversion-1.8.0-kwallet.patch
+#Patch1: subversion-1.7.0-rpath.patch
+#Patch2: subversion-1.7.0-pie.patch
+#Patch3: subversion-1.8.0-kwallet.patch
 BuildRequires: apr-devel >= 0.9.4
 BuildRequires: apr-util-devel >= 0.9.4
 BuildRequires: autoconf
@@ -119,8 +119,8 @@ BuildRequires: kdelibs-devel >= 4.0.0
 %endif
 BuildRequires: libtool
 BuildRequires: libserf-devel >= 1.2.1
-BuildRequires: python
-BuildRequires: python-devel
+BuildRequires: python >= 2.7
+BuildRequires: python-devel >= 2.7
 %if %{with_ruby}
 BuildRequires: ruby
 BuildRequires: ruby-devel
@@ -284,9 +284,9 @@ echo "Setting up included %{SOURCE2}"
 %{__mv} sqlite-autoconf-%{sqlite_amalgamation_version} sqlite-amalgamation
 %endif
 
-%patch1 -p1 -b .rpath
-%patch2 -p1 -b .pie
-%patch3 -p1 -b .kwallet
+#%patch1 -p1 -b .rpath
+#%patch2 -p1 -b .pie
+#%patch3 -p1 -b .kwallet
 #%patch4 -p1 -b .ruby
 #%patch11 -p1 -b .apr
 
