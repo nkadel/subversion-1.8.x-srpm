@@ -628,7 +628,7 @@ fi
 * Tue Oct 29 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.4-0.1
 - Update to 1.8.4 release
 
-* Fri Aug 29 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.3-0.1
+* Thu Aug 29 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.3-0.1
 - Update to 1.8.3 release
 
 * Wed Jul 24 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.1-0.1
@@ -638,7 +638,7 @@ fi
 * Sat Jul 13 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.3
 - Discard unneeded patches.
 
-* Thu Jun 19 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.2
+* Wed Jun 19 2013 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.0-0.2
 - Patch svnmucc symlink handling in Makefile.in
 - Disable plaintext password storage
 - Disable executable scripts in svnpubsub example to avoid non-Linux
@@ -667,7 +667,7 @@ fi
 * Sun Oct 21 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.7-0.1
 - Update version number.
 
-* Wed Aug 30 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.6-0.3
+* Thu Aug 30 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.6-0.3
 - Update version number.
 
 * Wed Aug 15 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.5-0.1
@@ -676,7 +676,7 @@ fi
 - Add 'install-tools' to install targets, for new subversion-tools packagte,
   also provides mod_dontdothat.so
 
-* Sun May 21 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.5-0.1
+* Mon May 21 2012 Nico Kadel-Garcia <nkadel@gmail.com> - 1.7.5-0.1
 - Update to 1.7.5
 - Change URL for subversion tarball source.
 
@@ -712,7 +712,7 @@ fi
 - add Vincent Batts' Ruby 1.9 fixes from dev@
 
 * Sun Feb  5 2012 Peter Robinson <pbrobinson@fedoraproject.org> - 1.7.1-3
-- fix gnome-keyring build deps 
+- fix gnome-keyring build deps
 
 * Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
@@ -957,7 +957,7 @@ fi
 - update to psvn.el r26383 from upstream
 
 * Sun Sep  2 2007 Joe Orton <jorton@redhat.com> 1.4.4-7
-- rebuild for fixed 32-bit APR 
+- rebuild for fixed 32-bit APR
 
 * Thu Aug 30 2007 Joe Orton <jorton@redhat.com> 1.4.4-6
 - clarify License tag; re-enable test suite
