@@ -79,7 +79,7 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.8.13
+Version: 1.8.14
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
