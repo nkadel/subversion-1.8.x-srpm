@@ -36,17 +36,17 @@ progname="`basename $0`"
 # Base URL for packages, update as needed
 APACHE_MIRROR=http://archive.apache.org/dist
 GTEST_MIRROR=http://googletest.googlecode.com/files
-SERF_MIRROR=http://serf.googlecode.com/files
-SQLITE_MIRROR=http://www.sqlite.org/2013
+SERF_MIRROR=https://www.apache.org/dist/serf
+SQLITE_MIRROR=https://sqlite.org/2016
 ZLIB_MIRROR=http://www.zlib.net
 
 APR_ICONV_VERSION=${APR_ICONV_VERSION:-"1.2.1"}
 APR_VERSION=${APR_VERSION:-"1.4.6"}
 APU_VERSION=${APU_VERSION:-"1.5.1"}
 GTEST_VERSION=${GTEST_VERSION:-"1.6.0"}
-HTTPD_VERSION=${HTTPD_VERSION:-"2.4.6"}
-SERF_VERSION=${SERF_VERSION:-"1.2.1"}
-SQLITE_VERSION=${SQLITE_VERSION:-"3.7.17"}
+HTTPD_VERSION=${HTTPD_VERSION:-"2.4.10"}
+SERF_VERSION=${SERF_VERSION:-"1.3.9"}
+SQLITE_VERSION=${SQLITE_VERSION:-"3.14.1"}
 # Use multiple processing steps to make printf work, without "$()" syntzx
 SQLITE_VERSION_LIST=`echo $SQLITE_VERSION | sed -e 's/\./ /g'`
 SQLITE_AUTOCONF_VERSION="`printf %u%02u%02u%02u $SQLITE_VERSION_LIST`"
