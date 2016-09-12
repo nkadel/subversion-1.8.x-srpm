@@ -61,7 +61,7 @@
 
 # Local tarballs used only when system components are too old
 %global python_version 2.4.6
-%global sqlite_amalgamation_version 3071700
+%global sqlite_amalgamation_version 3140100
 
 # set JDK path to build javahl; default for JPackage
 %global jdk_path /usr/lib/jvm/java
@@ -79,7 +79,7 @@
 
 Summary: A Modern Concurrent Version Control System
 Name: subversion
-Version: 1.8.14
+Version: 1.8.16
 Release: 0.1%{?dist}
 License: ASL 2.0
 Group: Development/Tools
@@ -87,7 +87,7 @@ URL: https://subversion.apache.org/
 Source0: https://www.apache.org/dist/subversion/subversion-%{version}.tar.bz2
 Source1: subversion.conf
 #Source2: http://sqlite.org/sqlite-amalgamation-%{sqlite_amalgamation_version}.tar.gz
-Source2: http://www.sqlite.org/2013/sqlite-autoconf-%{sqlite_amalgamation_version}.tar.gz
+Source2: https://sqlite.org/2016/sqlite-autoconf-%{sqlite_amalgamation_version}.tar.gz
 Source3: filter-requires.sh
 Source4: http://www.xsteve.at/prg/emacs/psvn.el
 Source5: psvn-init.el
@@ -607,6 +607,9 @@ fi
 %{_bindir}/svn-tools
 
 %changelog
+* Sun Sep 11 2016 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.16-0.1
+- Update to 1.8.16 release
+
 * Tue Mar 31 2015 Nico Kadel-Garcia <nkadel@gmail.com> - 1.8.13-0.1
 - Update to 1.8.13 release for security patches
 
